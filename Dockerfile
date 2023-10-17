@@ -10,5 +10,6 @@ USER user
 
 #copy the python files over
 COPY / /
+EXPOSE 5000
 
-# CMD [ "python3","app.py" ]
+CMD [ "python3","app.py" ]
