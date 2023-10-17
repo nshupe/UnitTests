@@ -39,7 +39,7 @@ def extract_x_axis():
 @app.route('/')
 def Line_graph():
     extract_x_axis()
-    unique_list = list(set(datetime_array)).sort()
+    unique_list = list(set(datetime_array))
     chart = pygal.Line()
     chart.title = 'chart name' # title
     chart.x_labels = map(lambda d: d.strftime('%Y-%m-%d'),unique_list)
