@@ -29,16 +29,16 @@ def extract_x_axis():
         year = date_object.year
         month = date_object.month
         day =  date_object.day
+        print (datetime(year,month,day))
         datetime_array.append(datetime(year,month,day))  
 
 @app.route('/')
 def Line_graph():
     extract_x_axis()
-    
-    
+    unique_list = list(set(datetime_array)).sort()
     chart = pygal.Line()
     chart.title = 'chart name' # title
-    chart.x_labels = map(lambda d: d.strftime('%Y-%m-%d'),datetime_array)
+    chart.x_labels = map(lambda d: d.strftime('%Y-%m-%d'),unique_list)
     
     chart.add('Open', [1,2,3,4,5]) # adds a line each data is a data point on graph
     chart.add('High',  [])
