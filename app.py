@@ -3,14 +3,18 @@ import redis
 import pygal
 from flask import Flask
 from datetime import datetime, timedelta
+import userInput
 
 app = Flask(__name__)
 cache = redis.Redis(host='redis', port=6379)
 
-api_symbol = "IBM"
-api_timeSeries = "INTRADAY"
+api_symbol = userInput.get_stock_symbol()
+graph_type = userInput.get_chart_type()
+api_timeSeries = userInput.get_time_series()
 api_timeframe = "2009-01"
-graph_type = "line"
+api_start_date = userInput.get_start_date()
+api_end_date = userInput.get_end_date(api_start_date)
+
 
 beginning_date = "2009-01-01"
 end_date = "2009-01-30"
@@ -53,3 +57,5 @@ def Line_graph():
     chart.render() # finalizes the graph 
 
     return chart.render_response() # prints to screen
+
+
