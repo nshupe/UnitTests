@@ -1,4 +1,4 @@
-FROM Flask
+FROM python:3.9.18
 #setup working directory
 WORKDIR /work
 # copy requirements
@@ -11,4 +11,4 @@ USER user
 #copy the python files over
 COPY / /
 
-#CMD [ "python3","app.py" ]
+# CMD [ "python3","app.py" ]
