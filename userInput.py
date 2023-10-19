@@ -36,7 +36,7 @@ def get_start_date():
             try:
                 # Try to parse the input as a date
                 date_obj = datetime.strptime(user_input, '%Y-%m-%d')
-                return date_obj.date()
+                return date_obj
             except ValueError:
                 pass  # Invalid date
         print("Invalid input. Please enter a date in YYYY-MM-DD format.")
@@ -49,7 +49,7 @@ def get_end_date(start_date):
         if re.match(r'^\d{4}-\d{2}-\d{2}$', user_input):
             try:
                 # Try to parse the input as a date
-                date_obj = datetime.strptime(user_input, '%Y-%m-%d').date()
+                date_obj = datetime.strptime(user_input, '%Y-%m-%d')
                 # Check if the end date is after the start date
                 if date_obj > start_date:
                     return date_obj

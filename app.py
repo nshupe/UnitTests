@@ -8,23 +8,39 @@ import userInput
 app = Flask(__name__)
 cache = redis.Redis(host='redis', port=6379)
 
-# api_symbol = userInput.get_stock_symbol()
-# graph_type = userInput.get_chart_type()
-# api_timeSeries = userInput.get_time_series()
-# api_timeframe = "2009-01"
-# api_start_date = userInput.get_start_date()
-# api_end_date = userInput.get_end_date(api_start_date)
+api_symbol = userInput.get_stock_symbol()
+graph_type = userInput.get_chart_type()
+api_timeSeries = userInput.get_time_series()
+beginning_date = userInput.get_start_date()
+end_date = userInput.get_end_date(beginning_date)
 
 #this is for testing purposes
-api_symbol = "IBM"
-api_timeSeries = "INTRADAY"
-api_timeframe = "2009-02"
-graph_type = "Line"
+# api_symbol = "IBM"
+# api_timeSeries = "INTRADAY"
+# graph_type = "Line"
+beginning_date = beginning_date.strftime("%Y-%m-%d")
+# end_date = beginning_date.strftime("%Y-%m-%d")
+# \n1. Intraday\n2. Daily\n3. Weekly\n4. Monthly\n\n
+match api_timeSeries:
+    case "1":
+        api_timeSeries = "INTRADAY"
+    case "2":
+        api_timeSeries = "DAILY"
+    case "3":
+        api_timeSeries = "WEEKLY"
+    case "4":
+        api_timeSeries = "MONTHLY"
 
+match graph_type:
+    case "1":
+        graph_type = "Bar"
+    case "2":
+        graph_type = "Line"
 
-beginning_date = "2009-01-01"
-end_date = "2009-01-30"
-
+# this is only used for intaday but dosent brake anything
+api_timeframe = beginning_date[:-3]
+graph_min = float('inf')
+graph_max = -float('inf')
 
 # these arrays will be used to populate the y axis
 open_array = []
@@ -72,6 +88,7 @@ def Graph():
     chart.title = f'chart name' 
     
     # x axis
+
     chart.x_labels = map(lambda d: d.strftime('%Y-%m-%d'),datetime_array)
     
     #y axis
@@ -80,6 +97,10 @@ def Graph():
     chart.add('Low',   low_array)
     chart.add('Close', close_array)
 
+    #changing foramt to datetime
+
+    
+    chart.range = [graph_min,graph_max]
     chart.render() # finalizes the graph 
 
     return chart.render_response() # prints to http://localhost:5000/
@@ -88,26 +109,46 @@ def Graph():
 #this gets the datetime array which is the x axis in the graph
 def extract_x_axis():
     global datetime_array  # Declare datetime_array as a global variable
+    global beginning_date
+    global end_date
+
     for key in data: 
-        date_object = datetime.strptime(key, "%Y-%m-%d %H:%M:%S")
+        if api_timeSeries == "INTRADAY":
+            date_object = datetime.strptime(key, "%Y-%m-%d %H:%M:%S")
+        else :
+            date_object = datetime.strptime(key, "%Y-%m-%d")
         year = date_object.year
         month = date_object.month
         day =  date_object.day
-        datetime_array.append(datetime(year,month,day))  
+
+        beginning_date_object = datetime.strptime(beginning_date, "%Y-%m-%d")
+        # end_date_object = datetime.strptime(end_date, "%Y-%m-%d")
+        if datetime(year,month,day) >= beginning_date_object and datetime(year,month,day) <= end_date:
+            datetime_array.append(datetime(year,month,day))  
 
 def extract_y_axis():
+    global graph_max
+    global graph_min
     # loop over datetime array to get the keys in order for the data object
     for key in datetime_array:
-        # Add 11 hours to the key
-        date_object = key + timedelta(hours=11)
-        # Convert the datetime object back to a string
-        newKey = date_object.strftime("%Y-%m-%d %H:%M:%S")
-
+        if api_timeSeries == "INTRADAY":
+            # Add 11 hours to the key
+            date_object = key + timedelta(hours=11)
+            # Convert the datetime object back to a string
+            newKey = date_object.strftime("%Y-%m-%d %H:%M:%S")
+        else :
+            newKey = key.strftime("%Y-%m-%d")
         # adds all the data to the relevant places and turns it into float for the graph
         open_array.append(float(data[newKey]["1. open"]))
         high_array.append(float(data[newKey]["2. high"]))
         low_array.append(float(data[newKey]["3. low"]))
         close_array.append(float(data[newKey]["4. close"]))
+
+        if graph_max < float(data[newKey]["2. high"]):
+            graph_max = float(data[newKey]["2. high"])
+        if graph_min > float(data[newKey]["3. low"]):
+            graph_min = float(data[newKey]["3. low"])
+        
 
 @app.route('/')
 def main():
