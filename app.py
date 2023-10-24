@@ -17,6 +17,7 @@ api_timeSeries = userInput.get_time_series()
 beginning_date = userInput.get_start_date()
 end_date = userInput.get_end_date(beginning_date)
 
+beginning_date_2 = beginning_date
 
 beginning_date = beginning_date.strftime("%Y-%m-%d")
 
@@ -90,7 +91,9 @@ def Graph():
          print("we fked up somewhere")
 
     #title
-    chart.title = f'chart name' 
+    formatted_end_date = end_date.strftime('%B %d, %Y')
+    formatted_beginning_date = beginning_date_2.strftime('%B %d, %Y')
+    chart.title = f'Stock data for {api_symbol}: {formatted_beginning_date} - {formatted_end_date}' 
     
     # x axis
 
