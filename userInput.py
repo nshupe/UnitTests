@@ -1,5 +1,4 @@
 import requests
-import pygal 
 from lxml import html
 import re
 from datetime import datetime

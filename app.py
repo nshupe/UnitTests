@@ -4,6 +4,9 @@ import pygal
 from flask import Flask
 from datetime import datetime, timedelta
 import userInput
+import webbrowser
+
+
 
 app = Flask(__name__)
 cache = redis.Redis(host='redis', port=6379)
@@ -14,13 +17,9 @@ api_timeSeries = userInput.get_time_series()
 beginning_date = userInput.get_start_date()
 end_date = userInput.get_end_date(beginning_date)
 
-#this is for testing purposes
-# api_symbol = "IBM"
-# api_timeSeries = "INTRADAY"
-# graph_type = "Line"
+
 beginning_date = beginning_date.strftime("%Y-%m-%d")
-# end_date = beginning_date.strftime("%Y-%m-%d")
-# \n1. Intraday\n2. Daily\n3. Weekly\n4. Monthly\n\n
+
 match api_timeSeries:
     case "1":
         api_timeSeries = "INTRADAY"
@@ -149,8 +148,11 @@ def extract_y_axis():
         if graph_min > float(data[newKey]["3. low"]):
             graph_min = float(data[newKey]["3. low"])
         
+    # ideally you would want to have this file sepreate from the main function and have this be a "server" program.... but the project is to small to warrent it
+    # so instead we have the two files meshed together.
 
 @app.route('/')
 def main():
-       return Graph()
-    
+    return Graph()
+
+webbrowser.open("http://localhost:5000/")    
