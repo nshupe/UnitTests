@@ -67,7 +67,13 @@ match api_timeSeries:
         print("we fked up")
 
 def Graph():
-    global datetime_array
+    global datetime_array, open_array, high_array, low_array, close_array  # Declare variables as global
+    datetime_array = []
+    open_array = []
+    high_array = []
+    low_array = []
+    close_array = []
+
     extract_x_axis()
     
     # magic god chatgpt taught me this
@@ -102,7 +108,7 @@ def Graph():
     chart.range = [graph_min,graph_max]
     chart.render() # finalizes the graph 
 
-    return chart.render_response() # prints to http://localhost:5000/
+    return chart.render_response() # save this chart somewhere else
 
 
 #this gets the datetime array which is the x axis in the graph
