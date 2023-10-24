@@ -1,12 +1,26 @@
 import requests
-from lxml import html
 import re
 from datetime import datetime
 
-def get_stock_symbol():
-  stock_symbol = input("\nEnter the symbol for the company: ")
-  return stock_symbol
 
+def get_stock_symbol():
+    while True:
+        try:
+            stock_symbol = input("\nEnter the symbol for the company: ")
+            url = f'https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol={stock_symbol}&interval=5min&&apikey=V33ZAOO7VB64CV9C'
+            r = requests.get(url)
+
+            if r.status_code == 200:
+                data = r.json()
+                if "Meta Data" in data:
+                    print("Symbol found: ", stock_symbol)
+                    return stock_symbol
+                else:
+                    print("The Stock symbol you inputted does not exist.")
+            else:
+                print(f"Error: Request failed with status code {r.status_code}")
+        except Exception as e:
+            print("An error occurred:", e)
 
 def get_chart_type():
   print("\n\nCHART TYPES:\n---------------------------\n1. Bar\n2. Line\n\n")
