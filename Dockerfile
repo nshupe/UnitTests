@@ -6,10 +6,9 @@ COPY requirements.txt ./
 
 RUN pip3 install -r requirements.txt
 #set user to non root
-USER user
-
+USER root
 #copy the python files over
 COPY / /
 EXPOSE 5000
 
-CMD [ "python3","app.py" ]
+CMD [ "flask --app","app.py","run" ]
