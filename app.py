@@ -155,4 +155,4 @@ def extract_y_axis():
 def main():
     return Graph()
 
-webbrowser.open("http://localhost:5000/")    
+webbrowser.open("http://127.0.0.1:5000/")    
