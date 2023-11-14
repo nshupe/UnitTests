@@ -69,7 +69,7 @@ def get_end_date(start_date):
                 date_obj = datetime.strptime(user_input, '%Y-%m-%d')
                 # Check if the end date is after the start date
                 if date_obj > start_date:
-                    if(date_obj > (datetime.now().date())):
+                    if(date_obj > (datetime.now())):
                       return date_obj
                     else:
                        print("End date should be before the current date")
